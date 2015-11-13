@@ -12,7 +12,7 @@ echo -en "\n\n-- Press any key to continue --"; read -n 1 cont; echo
 ## RERESH SYSTEM WITH APT-GET LIBRARY UPDATE & UPGRADE
 #####################################################################################
 
-clear; echo -e "\n\n\n\n\n\n\n\n\n\n"
+echo -e "\n"
 echo -e " Updating APT-GET libraries and installed packages..."
 echo -e "-------------------------------------------------------------------------------------"
 sudo apt-get -y -qq update 							# Update library
@@ -24,7 +24,7 @@ echo -e "\n\nAPT-GET update complete\n\n"
 ## ADJUSTING SYSTEM SETTINGS
 #####################################################################################
 
-clear; echo -e "\n\n\n\n\n\n\n\n\n\n"
+echo -e "\n"
 echo -e " Setting US locale and keyboard..."
 echo -e "-------------------------------------------------------------------------------------"
 sudo cp -f files/locale.gen /etc/locale.gen 		# Set locale to US
@@ -36,7 +36,7 @@ echo -e "\n\nUS Locale & Keyboard setup complete\n\n"
 ## Expand filesystem to the maximum on the card
 #####################################################################################
 
-clear; echo -e "\n\n\n\n\n\n\n\n\n\n"
+echo -e "\n"
 echo -e " Expanding file system..."
 echo -e "-------------------------------------------------------------------------------------"
 
@@ -59,19 +59,20 @@ service salt-minion restart
 ## Change /etc/rc.local appending script to set hostname automatically
 #####################################################################################
 
-sudo cat files/rc.local.append >> /etc/rc.local
+sed -i 's/exit 0$//' /etc/rc.local
+cat files/rc.local.append >> /etc/rc.local
 
 #####################################################################################
 ## Add salt master key
 #####################################################################################
 
-sudo cp -f files/salt-master-key /etc/salt/minion/master_sign.pub
+sudo cp -f files/salt-master-key /etc/salt/pki/minion/master_sign.pub
 
 #####################################################################################
 ## Reboot the machine
 #####################################################################################
 
-clear; echo -e "\n\n\n\n\n\n\n\n\n\n"
+echo -e "\n"
 echo "---------------------------------------------------------------------------------"
 echo "Based on the work that was just completed we recommend that you restart your"
 echo "machine and log back in using your new user account to continue this process."
