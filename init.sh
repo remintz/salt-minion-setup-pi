@@ -1,5 +1,15 @@
 #!/bin/bash
 
+disable_raspi_config_at_boot() {
+  if [ -e /etc/profile.d/raspi-config.sh ]; then
+    rm -f /etc/profile.d/raspi-config.sh
+    sed -i /etc/inittab \
+      -e "s/^#\(.*\)#\s*RPICFG_TO_ENABLE\s*/\1/" \
+      -e "/#\s*RPICFG_TO_DISABLE/d"
+    telinit q
+  fi
+}
+
 clear; echo -e "\n\n\n\n\n\n\n\n\n\n"
 echo -e "-------------------------------------------------------------------------------------"
 echo -e "| Initializing new RaspberryPi                                                      |"
@@ -48,10 +58,12 @@ echo -e "\n\nFilesystem expansion complete"
 ## Install salt minion
 #####################################################################################
 
+echo -e "\n\nInstall salt minion pointing to master at salt.acn-iot.com"
+echo -e "-------------------------------------------------------------------------------------"
 echo "deb http://debian.saltstack.com/debian wheezy-saltstack main" > /etc/apt/sources.list.d/saltstack.list
 wget -q -O- "http://debian.saltstack.com/debian-salt-team-joehealy.gpg.key" | apt-key add -
 apt-get update
-apt-get -y install salt-minion
+apt-get -y -qq install salt-minion
 sed -i 's/#master: salt$/master: salt.acn-iot.com/' /etc/salt/minion
 service salt-minion restart
 
@@ -59,6 +71,8 @@ service salt-minion restart
 ## Change /etc/rc.local appending script to set hostname automatically
 #####################################################################################
 
+echo -e "\n\nChange rc.local to set hostname automatically"
+echo -e "-------------------------------------------------------------------------------------"
 sed -i 's/exit 0$//' /etc/rc.local
 cat files/rc.local.append >> /etc/rc.local
 
@@ -66,7 +80,10 @@ cat files/rc.local.append >> /etc/rc.local
 ## Add salt master key
 #####################################################################################
 
-sudo cp -f files/salt-master-key /etc/salt/pki/minion/master_sign.pub
+echo -e "\n\nCopy salt master key"
+echo -e "-------------------------------------------------------------------------------------"
+mkdir -p /etc/salt/pki/minion
+cp -f files/salt-master-key /etc/salt/pki/minion/master_sign.pub
 
 #####################################################################################
 ## Reboot the machine
@@ -78,5 +95,6 @@ echo "Based on the work that was just completed we recommend that you restart yo
 echo "machine and log back in using your new user account to continue this process."
 echo "------------------------ PRESS ANY KEY TO CONTINUE ------------------------------"
 read -n 1 q; echo
+disable_raspi_config_at_boot
 sudo shutdown -r now
 
