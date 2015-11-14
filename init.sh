@@ -65,7 +65,6 @@ wget -q -O- "http://debian.saltstack.com/debian-salt-team-joehealy.gpg.key" | ap
 apt-get update
 apt-get -y -qq install salt-minion
 sed -i 's/#master: salt$/master: salt.acn-iot.com/' /etc/salt/minion
-service salt-minion restart
 
 #####################################################################################
 ## Change /etc/rc.local appending script to set hostname automatically
@@ -84,6 +83,11 @@ echo -e "\n\nCopy salt master key"
 echo -e "-------------------------------------------------------------------------------------"
 mkdir -p /etc/salt/pki/minion
 cp -f files/salt-master-key /etc/salt/pki/minion/master_sign.pub
+
+#####################################################################################
+## Remove cached minion id (probably the old hostname)
+#####################################################################################
+rm /etc/salt/minion_id
 
 #####################################################################################
 ## Reboot the machine
