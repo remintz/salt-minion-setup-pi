@@ -93,7 +93,7 @@ mkdir -p /etc/salt/minion.d
 cp -f files/minion_extra.conf /etc/salt/minion.d/minion_extra.conf
 
 # Remove cached minion id (probably the old hostname
-rm /etc/salt/minion_id
+#rm /etc/salt/minion_id
 
 #####################################################################################
 ## Reboot the machine
